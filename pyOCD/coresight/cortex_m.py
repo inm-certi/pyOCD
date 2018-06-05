@@ -446,8 +446,10 @@ class CortexM(Target):
         """
         halt the core
         """
+        print "###!!!### CortexM::halt() start"
         self.writeMemory(CortexM.DHCSR, CortexM.DBGKEY | CortexM.C_DEBUGEN | CortexM.C_HALT)
         self.dp.flush()
+        print "###!!!### CortexM::halt() leave"
 
     def step(self, disable_interrupts=True):
         """
@@ -531,6 +533,7 @@ class CortexM(Target):
         """
         perform a reset and stop the core on the reset handler
         """
+        print "###!!!### CortexM::resetStopOnReset() start"
         logging.debug("reset stop on Reset")
 
         # halt the target
@@ -550,6 +553,7 @@ class CortexM(Target):
 
         # restore vector catch setting
         self.writeMemory(CortexM.DEMCR, demcr)
+        print "###!!!### CortexM::resetStopOnReset() leave"
 
     def setTargetState(self, state):
         if state == "PROGRAM":

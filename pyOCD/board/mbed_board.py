@@ -139,6 +139,7 @@ class MbedBoard(Board):
         """
         Allow you to select a board among all boards connected
         """
+        print "###!!!### MbedBoard::chooseBoard() start"
         all_mbeds = MbedBoard.getAllConnectedBoards(dap_class, True, blocking,
                                                     target_override, frequency)
 
@@ -213,4 +214,5 @@ class MbedBoard(Board):
             except:
                 mbed.link.close()
                 raise
+        print "###!!!### MbedBoard::chooseBoard() leave"
         return mbed

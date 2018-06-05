@@ -109,6 +109,7 @@ class Flash(object):
         """
         Download the flash algorithm in RAM
         """
+        print "###!!!### Flash::init() start"
         self.target.halt()
         self.target.setTargetState("PROGRAM")
 
@@ -118,6 +119,8 @@ class Flash(object):
         # check the return code
         if result != 0:
             logging.error('init error: %i', result)
+
+        print "###!!!### Flash::init() leave"
 
     def computeCrcs(self, sectors):
         data = []

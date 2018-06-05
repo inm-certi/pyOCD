@@ -226,6 +226,7 @@ def main():
 
             # Intel hex file format
             elif args.format == 'hex':
+                print "###!!!### flashtool() parse intelhex"
                 hex = IntelHex(args.file)
                 addresses = hex.addresses()
                 addresses.sort()

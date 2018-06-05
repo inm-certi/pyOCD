@@ -171,6 +171,7 @@ class FlashBuilder(object):
         page_addr = flash_addr - (flash_addr % info.size)
         current_page = flash_page(page_addr, info.size, [], info.erase_weight, info.program_weight)
         self.page_list.append(current_page)
+        print "###!!!### FlashBuilder::program foreach flashop start"
         for flash_operation in self.flash_operation_list:
             pos = 0
             while pos < len(flash_operation.data):
@@ -198,6 +199,8 @@ class FlashBuilder(object):
 
                 #increment position
                 pos += amount
+
+        print "###!!!### FlashBuilder::program foreach flashop leave"
 
         # If smart flash was set to false then mark all pages
         # as requiring programming

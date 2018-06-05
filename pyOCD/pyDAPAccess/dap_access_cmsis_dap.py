@@ -495,6 +495,7 @@ class DAPAccessCMSISDAP(DAPAccessIntf):
         return
 
     def open(self):
+        print "###!!!### DapAccessCmsisDap::open() start"
         if self._interface is None:
             all_interfaces = _get_interfaces()
             for interface in all_interfaces:
@@ -523,12 +524,15 @@ class DAPAccessCMSISDAP(DAPAccessIntf):
         self._packet_size = self._protocol.dapInfo("PACKET_SIZE")
         self._interface.setPacketSize(self._packet_size)
 
+        print "###!!!### DapAccessCmsisDap::open() leave"
         self._init_deferred_buffers()
 
     def close(self):
+        print "###!!!### DapAccessCmsisDap::close() start"
         assert self._interface is not None
         self.flush()
         self._interface.close()
+        print "###!!!### DapAccessCmsisDap::close() leave"
 
     def get_unique_id(self):
         return self._unique_id
