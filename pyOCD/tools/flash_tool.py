@@ -140,6 +140,8 @@ def main():
     setup_logging(args)
     DAPAccess.set_args(args.daparg)
 
+    print "###!!!### flashtool() start"
+
     # Sanity checks before attaching to board
     if args.format == 'hex' and not intelhex_available:
         print("Unable to program hex file")
@@ -239,6 +241,8 @@ def main():
 
             else:
                 print("Unknown file format '%s'" % args.format)
+
+    print "###!!!### flashtool() leave"
 
 if __name__ == '__main__':
     main()

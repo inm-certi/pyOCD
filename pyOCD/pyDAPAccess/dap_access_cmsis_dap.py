@@ -534,6 +534,7 @@ class DAPAccessCMSISDAP(DAPAccessIntf):
         return self._unique_id
 
     def reset(self):
+        print "###!!!### DapAccessCmsisDap::reset"
         self.flush()
         self._protocol.setSWJPins(0, 'nRESET')
         time.sleep(0.1)
@@ -548,6 +549,7 @@ class DAPAccessCMSISDAP(DAPAccessIntf):
             self._protocol.setSWJPins(0x80, 'nRESET')
 
     def set_clock(self, frequency):
+        print "###!!!### DapAccessCmsisDap::setClock"
         self.flush()
         self._protocol.setSWJClock(frequency)
         self._frequency = frequency
@@ -582,11 +584,13 @@ class DAPAccessCMSISDAP(DAPAccessIntf):
         self._deferred_transfer = enable
 
     def flush(self):
+        print "###!!!### DapAccessCmsisDap::flush() entering"
         # Send current packet
         self._send_packet()
         # Read all backlogged
         for _ in range(len(self._commands_to_read)):
             self._read_packet()
+        print "###!!!### DapAccessCmsisDap::flush() leaving"
 
     def identify(self, item):
         assert isinstance(item, DAPAccessIntf.ID)
@@ -601,6 +605,7 @@ class DAPAccessCMSISDAP(DAPAccessIntf):
     #             Target access functions
     # ------------------------------------------- #
     def connect(self, port=DAPAccessIntf.PORT.DEFAULT):
+        print "###!!!### DapAccessCmsisDap::connect() entering"
         assert isinstance(port, DAPAccessIntf.PORT)
         actual_port = self._protocol.connect(port.value)
         self._dap_port = DAPAccessIntf.PORT(actual_port)
@@ -608,6 +613,7 @@ class DAPAccessCMSISDAP(DAPAccessIntf):
         self._protocol.setSWJClock(self._frequency)
         # configure transfer
         self._protocol.transferConfigure()
+        print "###!!!### DapAccessCmsisDap::connect() leaving"
 
     def swj_sequence(self):
         if self._dap_port == DAPAccessIntf.PORT.SWD:
@@ -624,8 +630,10 @@ class DAPAccessCMSISDAP(DAPAccessIntf):
             assert False
 
     def disconnect(self):
+        print "###!!!### DapAccessCmsisDap::disconnect() entering"
         self.flush()
         self._protocol.disconnect()
+        print "###!!!### DapAccessCmsisDap::disconnect() leaving"
 
     def write_reg(self, reg_id, value, dap_index=0):
         assert reg_id in self.REG
@@ -737,10 +745,15 @@ class DAPAccessCMSISDAP(DAPAccessIntf):
         object
         """
         # Grab command, send it and decode response
+        print "###!!!### DapAccessCmsisDap::readPacket entering"
         cmd = self._commands_to_read.popleft()
         try:
             raw_data = self._interface.read()
             raw_data = bytearray(raw_data)
+
+            for i in range(len(raw_data)):
+                print "###YYY### [%d] = 0x%08X" % (i, raw_data[i])
+
             decoded_data = cmd.decode_data(raw_data)
         except Exception as exception:
             self._abort_all_transfers(exception)
@@ -770,6 +783,7 @@ class DAPAccessCMSISDAP(DAPAccessIntf):
         # Remove used data from _command_response_buf
         if pos > 0:
             self._command_response_buf = self._command_response_buf[pos:]
+        print "###!!!### DapAccessCmsisDap::readPacket leaving"
 
     def _send_packet(self):
         """

@@ -169,6 +169,11 @@ class PyUSB(Interface):
         write data on the OUT endpoint associated to the HID interface
         """
 
+        print "###XXX### usbinterface::write()"
+        for i in range(len(data)):
+            print "###XXX### [%d]: 0x%08X" % (i, data[i])
+        print "###XXX### usbinterface::write() leave"
+
         report_size = self.packet_size
         if self.ep_out:
             report_size = self.ep_out.wMaxPacketSize
@@ -201,7 +206,13 @@ class PyUSB(Interface):
         if self.rcv_data[0] is None:
             raise DAPAccessIntf.DeviceError("Device %s read thread exited" %
                                             self.serial_number)
-        return self.rcv_data.pop(0)
+        ret = self.rcv_data.pop(0)
+
+        print "###XXX### usbinterface::read()"
+        for i in range(len(ret)):
+            print "###XXX### [%d]: 0x%08X" % (i, ret[i])
+        print "###XXX### usbinterface::read() leave"
+        return ret
 
     def setPacketCount(self, count):
         # No interface level restrictions on count

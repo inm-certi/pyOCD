@@ -63,8 +63,9 @@ class flash_page(object):
         """
         Get time to program a page including the data transfer
         """
-        return self.program_weight + \
+        ret = self.program_weight + \
             float(len(self.data)) / float(DATA_TRANSFER_B_PER_S)
+        return ret
 
     def getEraseProgramWeight(self):
         """
@@ -151,6 +152,8 @@ class FlashBuilder(object):
         # - lpc4330     -Non 0 base address
         # - nRF51       -UICR location far from flash (address 0x10001000)
         # - LPC1768     -Different sized pages
+
+        print "###!!!### FlashBuilder::program start"
         program_start = time()
 
         if progress_cb is None:
@@ -209,6 +212,7 @@ class FlashBuilder(object):
             elif chip_erase is True:
                 logging.warning('Chip erase used when flash address 0x%x is not the same as flash start 0x%x', self.page_list[0].addr, self.flash_start)
 
+        print "###!!!### FlashBuilder::program this.flash.init()"
         self.flash.init()
 
         chip_erase_count, chip_erase_program_time = self._compute_chip_erase_pages_and_weight()
@@ -223,6 +227,7 @@ class FlashBuilder(object):
         if chip_erase != True:
             analyze_start = time()
             if self.flash.getFlashInfo().crc_supported:
+                print "###!!!### FlashBuilder::program computePageErasePagesAndWeightCrc32()"
                 sector_erase_count, page_program_time = self._compute_page_erase_pages_and_weight_crc32(fast_verify)
                 self.perf.analyze_type = FlashBuilder.FLASH_ANALYSIS_CRC32
             else:
@@ -251,6 +256,7 @@ class FlashBuilder(object):
             else:
                 flash_operation = self._page_erase_program(progress_cb)
 
+        print "###!!!### FlashBuilder::program this.flash.target.resetStopOnReset()"
         self.flash.target.resetStopOnReset()
 
         program_finish = time()

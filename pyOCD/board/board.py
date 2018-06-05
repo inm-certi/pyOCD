@@ -44,17 +44,20 @@ class Board(object):
         """
         Initialize the board
         """
+        print "###!!!### Board::init() entering"
         logging.debug("init board %s", self)
         self.link.set_clock(self.debug_clock_frequency)
         self.link.set_deferred_transfer(True)
         self.target.init()
         self.initiated = True
+        print "###!!!### Board::init() leaving"
 
     def uninit(self, resume=True):
         """
         Uninitialize the board: link and target.
         This function resumes the target
         """
+        print "###!!!### Board::uninit"
         if self.closed:
             return
         self.closed = True
