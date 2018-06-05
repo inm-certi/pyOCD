@@ -93,8 +93,10 @@ class AccessPort(object):
             self.inited_secondary = True
 
     def init_rom_table(self):
+        print "###!!!### AccessPort::initRomTable() start"
         self.rom_table = ROMTable(self)
         self.rom_table.init()
+        print "###!!!### AccessPort::initRomTable() leave"
 
     def read_reg(self, addr, now=True):
         return self.dp.readAP((self.ap_num << APSEL_SHIFT) | addr, now)
@@ -127,6 +129,7 @@ class MEM_AP(AccessPort):
     #
     # By default the transfer size is a word
     def writeMemory(self, addr, data, transfer_size=32):
+        print "###!!!### MemAp::writeMemory() start"
         num = self.dp.next_access_number
         if LOG_DAP:
             self.logger.info("writeMem:%06d (addr=0x%08x, size=%d) = 0x%08x {", num, addr, transfer_size, data)
@@ -136,6 +139,7 @@ class MEM_AP(AccessPort):
         elif transfer_size == 16:
             data = data << ((addr & 0x02) << 3)
 
+        print "###!!!### MemAp::writeMemory() writeReg TAR, DRW"
         try:
             self.write_reg(AP_REG['TAR'], addr)
             self.write_reg(AP_REG['DRW'], data)
@@ -149,6 +153,7 @@ class MEM_AP(AccessPort):
             raise
         if LOG_DAP:
             self.logger.info("writeMem:%06d }", num)
+        print "###!!!### MemAp::writeMemory() leave"
 
     ## @brief Read a memory location.
     #
@@ -173,6 +178,7 @@ class MEM_AP(AccessPort):
             raise
 
         def readMemCb():
+            print "###!!!### MemAp::readMemoryAsync() start"
             try:
                 res = result_cb()
                 if transfer_size == 8:
@@ -189,6 +195,7 @@ class MEM_AP(AccessPort):
             except DAPAccess.Error as error:
                 self._handle_error(error, num)
                 raise
+            print "###!!!### MemAp::readMemoryAsync() leave"
             return res
 
         if now:
@@ -383,6 +390,7 @@ class MEM_AP(AccessPort):
 
 class AHB_AP(MEM_AP):
     def init_rom_table(self):
+        print "###!!!### AhbAp::initRomTable() start"
         # Turn on DEMCR.TRCENA before reading the ROM table. Some ROM table entries will
         # come back as garbage if TRCENA is not set.
         try:
@@ -395,5 +403,6 @@ class AHB_AP(MEM_AP):
 
         # Invoke superclass.
         super(AHB_AP, self).init_rom_table()
+        print "###!!!### AhbAp::initRomTable() leave"
 
 

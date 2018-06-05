@@ -427,6 +427,7 @@ class FlashBuilder(object):
         """
         Program by first performing a chip erase.
         """
+        print "###!!!### FlashBuilder::chipEraseProgramDoubleBuffer start"
         logging.debug("Smart chip erase")
         logging.debug("%i of %i pages already erased", len(self.page_list) - self.chip_erase_count, len(self.page_list))
         progress_cb(0.0)
@@ -476,6 +477,7 @@ class FlashBuilder(object):
             progress_cb(float(progress) / float(self.chip_erase_weight))
 
         progress_cb(1.0)
+        print "###!!!### FlashBuilder::chipEraseProgramDoubleBuffer leave"
         return FlashBuilder.FLASH_CHIP_ERASE
 
     def _page_erase_program(self, progress_cb=_stub_progress):

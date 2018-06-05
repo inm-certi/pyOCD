@@ -291,9 +291,11 @@ class DebugPort(object):
         # Read callback returned for async reads.
         def readAPCb():
             try:
+                print "###!!!### DebugPort::readAPAsync() start"
                 result = result_cb()
                 if LOG_DAP:
                     self.logger.info("readAP:%06d %s(addr=0x%08x) -> 0x%08x", num, "" if now else "...", addr, result)
+                print "###!!!### DebugPort::readAPAsync() leave"
                 return result
             except DAPAccess.Error as error:
                 self._handle_error(error, num)

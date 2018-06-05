@@ -503,6 +503,7 @@ class CortexM(Target):
         reset a core. After a call to this function, the core
         is running
         """
+        print "###!!!### CortexM::reset() start"
         if software_reset == None:
             # Default to software reset if nothing is specified
             software_reset = True
@@ -511,6 +512,7 @@ class CortexM(Target):
 
         if software_reset:
             # Perform the reset.
+            print "###!!!### CortexM::reset() this.writeMemory()"
             try:
                 self.writeMemory(CortexM.NVIC_AIRCR, CortexM.NVIC_AIRCR_VECTKEY | CortexM.NVIC_AIRCR_SYSRESETREQ)
                 # Without a flush a transfer error can occur
@@ -519,19 +521,24 @@ class CortexM(Target):
                 self.dp.flush()
 
         else:
+            print "###!!!### CortexM::reset() this.dp.reset()"
             self.dp.reset()
 
         # Now wait for the system to come out of reset. Keep reading the DHCSR until
         # we get a good response with S_RESET_ST cleared, or we time out.
         startTime = time()
+        print "###!!!### CortexM::reset() wait for DHCSR"
         while time() - startTime < 2.0:
             try:
                 dhcsr = self.read32(CortexM.DHCSR)
                 if (dhcsr & CortexM.S_RESET_ST) == 0:
+                    print "###!!!### CortexM::reset() ok, break"
                     break
             except DAPAccess.TransferError:
+                print "###!!!### CortexM::reset() result: Exception"
                 self.dp.flush()
                 sleep(0.01)
+        print "###!!!### CortexM::reset() leave"
 
     def resetStopOnReset(self, software_reset=None):
         """
@@ -599,6 +606,7 @@ class CortexM(Target):
         """
         resume the execution
         """
+        print "###!!!### CortexM::resume() start"
         if self.getState() != Target.TARGET_HALTED:
             logging.debug('cannot resume: target not halted')
             return
@@ -606,6 +614,7 @@ class CortexM(Target):
         self.clearDebugCauseBits()
         self.writeMemory(CortexM.DHCSR, CortexM.DBGKEY | CortexM.C_DEBUGEN)
         self.dp.flush()
+        print "###!!!### CortexM::resume() leave"
 
     def findBreakpoint(self, addr):
         return self.bp_manager.find_breakpoint(addr)
@@ -710,6 +719,7 @@ class CortexM(Target):
         data_list.  If any register in reg_list is a string, find the number
         associated to this register in the lookup table CORE_REGISTER.
         """
+        print "###!!!### CortexM::writeCoreRegisterRaw() start"
         assert len(reg_list) == len(data_list)
         # convert to index only
         reg_list = [register_name_to_index(reg) for reg in reg_list]
@@ -751,11 +761,14 @@ class CortexM(Target):
             dhcsr_cb = self.readMemory(CortexM.DHCSR, now=False)
             dhcsr_cb_list.append(dhcsr_cb)
 
+        print "###!!!### CortexM::writeCoreRegisterRaw() read S_REGRDY"
+        print "###!!!### CortexM::writeCoreRegisterRaw() sizeof results = " + str(len(dhcsr_cb_list))
         # Make sure S_REGRDY was set for all register
         # writes
         for dhcsr_cb in dhcsr_cb_list:
             dhcsr_val = dhcsr_cb()
             assert dhcsr_val & CortexM.S_REGRDY
+        print "###!!!### CortexM::writeCoreRegisterRaw() leave"
 
     ## @brief Set a hardware or software breakpoint at a specific location in memory.
     #

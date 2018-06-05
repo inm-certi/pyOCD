@@ -201,6 +201,7 @@ class Flash(object):
         """
         Flash one page
         """
+        print "###!!!### Flash::startProgramPageWithBuffer() start"
         assert bufferNumber < len(self.page_buffers), "Invalid buffer number"
 
         # get info about this page
@@ -208,6 +209,7 @@ class Flash(object):
 
         # update core register to execute the program_page subroutine
         result = self.callFunction(self.flash_algo['pc_program_page'], flashPtr, page_info.size, self.page_buffers[bufferNumber])
+        print "###!!!### Flash::startProgramPageWithBuffer() leave"
 
     def loadPageBuffer(self, bufferNumber, flashPtr, bytes):
         assert bufferNumber < len(self.page_buffers), "Invalid buffer number"
@@ -307,6 +309,7 @@ class Flash(object):
         self.flashBlock(flashPtr, data, smart_flash, chip_erase, progress_cb, fast_verify)
 
     def callFunction(self, pc, r0=None, r1=None, r2=None, r3=None, init=False):
+        print "###!!!### Flash::callFunction() start"
         reg_list = []
         data_list = []
 
@@ -347,11 +350,15 @@ class Flash(object):
 
         # resume target
         self.target.resume()
+        print "###!!!### Flash::callFunction() leave"
 
     ## @brief Wait until the breakpoint is hit.
     def waitForCompletion(self):
+        print "###!!!### Flash::waitForCompletion() start"
+        print "###!!!### Flash::waitForCompletion() while state == TARGET_RUNNING"
         while(self.target.getState() == Target.TARGET_RUNNING):
             pass
+        print "###!!!### Flash::waitForCompletion() end of while state == TARGET_RUNNING"
 
         if self.flash_algo_debug:
             analyzer_supported = self.flash_algo['analyzer_supported']
@@ -393,6 +400,7 @@ class Flash(object):
             assert error == False
             self.target.setVectorCatch(self._saved_vector_catch)
 
+        print "###!!!### Flash::waitForCompletion() leave"
         return self.target.readCoreRegister('r0')
 
     def callFunctionAndWait(self, pc, r0=None, r1=None, r2=None, r3=None, init=False):

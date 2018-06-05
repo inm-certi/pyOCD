@@ -111,6 +111,7 @@ class _Transfer(object):
         """
         Get the result of this transfer.
         """
+        print "###!!!### Transfer::getResult() start"
         while self._result is None:
             if len(self.daplink._commands_to_read) > 0:
                 self.daplink._read_packet()
@@ -126,6 +127,7 @@ class _Transfer(object):
             raise self._error
 
         assert self._result is not None
+        print "###!!!### Transfer::getResult() leave"
         return self._result
 
 class _Command(object):
@@ -668,9 +670,11 @@ class DAPAccessCMSISDAP(DAPAccessIntf):
         assert transfer is not None
 
         def read_reg_cb():
+            print "###!!!### DapAccessCmsisDap::readRegAsync() start"
             res = transfer.get_result()
             assert len(res) == 1
             res = res[0]
+            print "###!!!### DapAccessCmsisDap::readRegAsync() leave"
             return res
 
         if now:

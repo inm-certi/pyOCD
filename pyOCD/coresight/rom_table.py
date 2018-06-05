@@ -165,6 +165,7 @@ class CoreSightComponent(object):
 
 class ROMTable(CoreSightComponent):
     def __init__(self, ap, top_addr=None, parent_table=None):
+        print "###!!!### RomTable::constructor() start"
         # If no table address is provided, use the root ROM table for the AP.
         if top_addr is None:
             top_addr = ap.rom_addr
@@ -173,8 +174,10 @@ class ROMTable(CoreSightComponent):
         self.number = (self.parent.number + 1) if self.parent else 0
         self.entry_size = 0
         self.components = []
+        print "###!!!### RomTable::constructor() leave"
 
     def init(self):
+        print "###!!!### RomTable::init() start"
         self.read_id_registers()
         if not self.is_rom_table:
             logging.warning("Warning: ROM table @ 0x%08x has unexpected CIDR component class (0x%x)", self.address, self.component_class)
@@ -182,8 +185,10 @@ class ROMTable(CoreSightComponent):
         if self.count_4kb != 1:
             logging.warning("Warning: ROM table @ 0x%08x is larger than 4kB (%d 4kb pages)", self.address, self.count_4kb)
         self.read_table()
+        print "###!!!### RomTable::init() leave"
 
     def read_table(self):
+        print "###!!!### RomTable::readTable() start"
         logging.info("ROM table #%d @ 0x%08x cidr=%x pidr=%x", self.number, self.address, self.cidr, self.pidr)
         self.components = []
 
@@ -194,6 +199,7 @@ class ROMTable(CoreSightComponent):
         entryAddress = self.address
         foundEnd = False
         entriesRead = 0
+        print "###!!!### RomTable::readTable() while !foundEnd && entriesRead < ROM_TABLE_ENTRY_READ_COUNT"
         while not foundEnd and entriesRead < ROM_TABLE_MAX_ENTRIES:
             # Read several entries at a time for performance.
             readCount = min(ROM_TABLE_MAX_ENTRIES - entriesRead, ROM_TABLE_ENTRY_READ_COUNT)
@@ -216,6 +222,8 @@ class ROMTable(CoreSightComponent):
                 self.handle_table_entry(entry)
 
                 entryAddress += 4
+
+        print "###!!!### RomTable::readTable() leave"
 
     def read_table_8(self):
         entryAddress = self.address
