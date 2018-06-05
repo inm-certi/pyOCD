@@ -113,6 +113,7 @@ class MEM_AP(AccessPort):
         self.auto_increment_page_size = 0x400
 
     def init(self, bus_accessible=True):
+        print "###!!!### MemAp::init() start"
         super(MEM_AP, self).init(bus_accessible)
 
         # Look up the page size based on AP ID.
@@ -120,6 +121,7 @@ class MEM_AP(AccessPort):
             self.auto_increment_page_size = MEM_AP_IDR_TO_WRAP_SIZE[self.idr]
         except KeyError:
             logging.warning("Unknown MEM-AP IDR: 0x%x" % self.idr)
+        print "###!!!### MemAp::init() leave"
 
     ## @brief Write a single memory location.
     #

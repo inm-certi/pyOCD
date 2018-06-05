@@ -108,7 +108,7 @@ class MbedBoard(Board):
         """
         Return an array of all mbed boards connected
         """
-
+        print "###!!!### MbedBoard::getAllConnectedBoards() start"
         mbed_list = []
         while True:
 
@@ -119,8 +119,10 @@ class MbedBoard(Board):
 
             #TODO - handle exception on open
             if not close:
+                print "###!!!### MbedBoard::getAllConnectedBoards() foreach connectedDaps start"
                 for dap_access in connected_daps:
                     dap_access.open()
+                print "###!!!### MbedBoard::getAllConnectedBoards() foreach connectedDaps leave"
 
             if not blocking:
                 break
@@ -130,6 +132,7 @@ class MbedBoard(Board):
                 sleep(0.01)
             assert len(mbed_list) == 0
 
+        print "###!!!### MbedBoard::getAllConnectedBoards() leave"
         return mbed_list
 
     @staticmethod

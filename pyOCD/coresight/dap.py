@@ -107,11 +107,13 @@ class DebugPort(object):
         self.logger.setLevel(logging.DEBUG)
 
     def init(self):
+        print "###!!!### DebugPort::init() start"
         # Connect to the target.
         self.link.connect()
         self.link.swj_sequence()
         self.read_id_code()
         self.clear_sticky_err()
+        print "###!!!### DebugPort::init() leave"
 
     def read_id_code(self):
         # Read ID register and get DP version
@@ -121,6 +123,7 @@ class DebugPort(object):
         return self.dpidr
 
     def flush(self):
+        print "###!!!### DebugPort::flush() start"
         try:
             self.link.flush()
         except DAPAccess.Error as error:
@@ -129,6 +132,7 @@ class DebugPort(object):
         finally:
             self._csw = {}
             self._dp_select = -1
+        print "###!!!### DebugPort::flush() leave"
 
     def read_reg(self, addr, now=True):
         return self.readDP(addr, now)
@@ -137,6 +141,7 @@ class DebugPort(object):
         self.writeDP(addr, data)
 
     def power_up_debug(self):
+        print "###!!!### DebugPort::powerUpDebug() start"
         # select bank 0 (to access DRW and TAR)
         self.write_reg(DP_REG['SELECT'], 0)
         self.write_reg(DP_REG['CTRL_STAT'], CSYSPWRUPREQ | CDBGPWRUPREQ)
@@ -148,18 +153,23 @@ class DebugPort(object):
 
         self.write_reg(DP_REG['CTRL_STAT'], CSYSPWRUPREQ | CDBGPWRUPREQ | TRNNORMAL | MASKLANE)
         self.write_reg(DP_REG['SELECT'], 0)
+        print "###!!!### DebugPort::powerUpDebug() leave"
 
     def power_down_debug(self):
+        print "###!!!### DebugPort::powerDownDebug() start"
         # select bank 0 (to access DRW and TAR)
         self.write_reg(DP_REG['SELECT'], 0)
         self.write_reg(DP_REG['CTRL_STAT'], 0)
+        print "###!!!### DebugPort::powerDownDebug() leave"
 
     def reset(self):
+        print "###!!!### DebugPort::reset() start"
         try:
             self.link.reset()
         finally:
             self._csw = {}
             self._dp_select = -1
+        print "###!!!### DebugPort::reset() leave"
 
     def assert_reset(self, asserted):
         self.link.assert_reset(asserted)
