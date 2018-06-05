@@ -308,6 +308,7 @@ class CortexM(Target):
         """
         Cortex M initialization. The bus must be accessible when this method is called.
         """
+        print "###!!!### CortexM::init() start"
         if self.halt_on_connect:
             self.halt()
         self.readCoreType()
@@ -316,6 +317,7 @@ class CortexM(Target):
         self.fpb.init()
         self.dwt.init()
         self.sw_bp.init()
+        print "###!!!### CortexM::init() leave"
 
     def disconnect(self):
         # Remove breakpoints.
@@ -396,7 +398,9 @@ class CortexM(Target):
         write a memory location.
         By default the transfer size is a word
         """
+        print "###!!!### CortexM::writeMemory() start"
         self.ap.writeMemory(addr, value, transfer_size)
+        print "###!!!### CortexM::writeMemory() leave"
 
     def readMemory(self, addr, transfer_size=32, now=True):
         """

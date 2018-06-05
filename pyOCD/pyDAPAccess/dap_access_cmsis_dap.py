@@ -553,10 +553,11 @@ class DAPAccessCMSISDAP(DAPAccessIntf):
             self._protocol.setSWJPins(0x80, 'nRESET')
 
     def set_clock(self, frequency):
-        print "###!!!### DapAccessCmsisDap::setClock"
+        print "###!!!### DapAccessCmsisDap::setClock() start"
         self.flush()
         self._protocol.setSWJClock(frequency)
         self._frequency = frequency
+        print "###!!!### DapAccessCmsisDap::setClock() leave"
 
     def get_swj_mode(self):
         return self._dap_port

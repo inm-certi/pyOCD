@@ -78,6 +78,7 @@ class CoreSightTarget(Target):
         self._root_contexts[core.core_number] = None
 
     def init(self, bus_accessible=True):
+        print "###!!!### CoreSightTarget::init() start"
         # Start loading the SVD file
         self.loadSVD()
 
@@ -95,6 +96,7 @@ class CoreSightTarget(Target):
         if bus_accessible:
             core0.init()
         self.add_core(core0)
+        print "###!!!### CoreSightTarget::init() leave"
 
     def disconnect(self):
         for core in self.cores.values():
