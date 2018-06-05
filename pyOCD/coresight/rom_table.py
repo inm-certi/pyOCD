@@ -200,10 +200,14 @@ class ROMTable(CoreSightComponent):
         foundEnd = False
         entriesRead = 0
         print "###!!!### RomTable::readTable() while !foundEnd && entriesRead < ROM_TABLE_ENTRY_READ_COUNT"
+        print "###!!!### RomTable::readTable() found = %s, entriesRead = %d, ROM_TABLE_MAX_ENTRIES= %d " % (str(foundEnd), entriesRead, ROM_TABLE_MAX_ENTRIES)
         while not foundEnd and entriesRead < ROM_TABLE_MAX_ENTRIES:
             # Read several entries at a time for performance.
             readCount = min(ROM_TABLE_MAX_ENTRIES - entriesRead, ROM_TABLE_ENTRY_READ_COUNT)
+            print "###!!!### RomTable::readTable() readCount = " + str(readCount)
             entries = self.ap.readBlockMemoryAligned32(entryAddress, readCount)
+            for i in range(len(entries)):
+                print "###!!!### RomTable::readTable() entry[" + str(i) + "]: " + str(entries[i])
             entriesRead += readCount
 
             # Determine entry size if unknown.
@@ -242,6 +246,7 @@ class ROMTable(CoreSightComponent):
             entryAddress += 16
 
     def handle_table_entry(self, entry):
+        print "###!!!### RomTable::handleTableEntry() start"
         # Nonzero entries can still be disabled, so check the present bit before handling.
         if (entry & ROM_TABLE_ENTRY_PRESENT_MASK) == 0:
             return
@@ -251,6 +256,7 @@ class ROMTable(CoreSightComponent):
         if (entry & ROM_TABLE_ADDR_OFFSET_NEG_MASK) != 0:
             offset = ~invert32(offset)
         address = self.address + offset
+        print "###!!!### RomTable::handleTableEntry() address = 0x%08X" % (address)
 
         # Create component instance.
         cmp = CoreSightComponent(self.ap, address)
@@ -264,5 +270,6 @@ class ROMTable(CoreSightComponent):
             cmp.init()
 
         self.components.append(cmp)
+        print "###!!!### RomTable::handleTableEntry() leave"
 
 
