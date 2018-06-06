@@ -311,11 +311,17 @@ class CortexM(Target):
         print "###!!!### CortexM::init() start"
         if self.halt_on_connect:
             self.halt()
+        print "###!!!### CortexM::init() readCoreType"
         self.readCoreType()
+        print "###!!!### CortexM::init() checkForFpu"
         self.checkForFPU()
+        print "###!!!### CortexM::init() buildTargetXml"
         self.buildTargetXML()
+        print "###!!!### CortexM::init() fpb.init"
         self.fpb.init()
+        print "###!!!### CortexM::init() dwt.init"
         self.dwt.init()
+        print "###!!!### CortexM::init() swBp.init"
         self.sw_bp.init()
         print "###!!!### CortexM::init() leave"
 

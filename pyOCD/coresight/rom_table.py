@@ -200,14 +200,14 @@ class ROMTable(CoreSightComponent):
         foundEnd = False
         entriesRead = 0
         print "###!!!### RomTable::readTable() while !foundEnd && entriesRead < ROM_TABLE_ENTRY_READ_COUNT"
-        print "###!!!### RomTable::readTable() found = %s, entriesRead = %d, ROM_TABLE_MAX_ENTRIES= %d " % (str(foundEnd), entriesRead, ROM_TABLE_MAX_ENTRIES)
+        print "###!!!### RomTable::readTable() found = %s, entriesRead = %d, ROM_TABLE_MAX_ENTRIES = %d " % (str(foundEnd), entriesRead, ROM_TABLE_MAX_ENTRIES)
         while not foundEnd and entriesRead < ROM_TABLE_MAX_ENTRIES:
             # Read several entries at a time for performance.
             readCount = min(ROM_TABLE_MAX_ENTRIES - entriesRead, ROM_TABLE_ENTRY_READ_COUNT)
             print "###!!!### RomTable::readTable() readCount = " + str(readCount)
             entries = self.ap.readBlockMemoryAligned32(entryAddress, readCount)
             for i in range(len(entries)):
-                print "###!!!### RomTable::readTable() entry[" + str(i) + "]: " + str(entries[i])
+                print "###!!!### RomTable::readTable() entry[%d]: 0x%08X" % (i, entries[i])
             entriesRead += readCount
 
             # Determine entry size if unknown.
@@ -253,10 +253,11 @@ class ROMTable(CoreSightComponent):
 
         # Get the component's top 4k address.
         offset = entry & ROM_TABLE_ADDR_OFFSET_MASK
+        print "###!!!### RomTable::handleTableEntry() offset =  %d" % (offset)
         if (entry & ROM_TABLE_ADDR_OFFSET_NEG_MASK) != 0:
             offset = ~invert32(offset)
         address = self.address + offset
-        print "###!!!### RomTable::handleTableEntry() address = 0x%08X" % (address)
+        print "###!!!### RomTable::handleTableEntry() address = 0x%08X, this.address = 0x%08X" % (address, self.address)
 
         # Create component instance.
         cmp = CoreSightComponent(self.ap, address)
