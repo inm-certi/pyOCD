@@ -227,3 +227,8 @@ class CoreSightTarget(Target):
             core = self._selected_core
         self._root_contexts[core] = context
 
+    def adjustAccessNumberStart(self):
+        self.selected_core.adjustAccessNumberStart()
+
+    def adjustAccessNumberEnd(self):
+        self.selected_core.adjustAccessNumberEnd()

@@ -245,6 +245,7 @@ class _Command(object):
         """
         Add a single or block register transfer operation to this command
         """
+        print "###!!!### Command::add() start"
         assert self._data_encoded is False
         if self._dap_index is None:
             self._dap_index = dap_index
@@ -260,11 +261,17 @@ class _Command(object):
             self._read_count += count
         else:
             self._write_count += count
+
+        if data is not None:
+            for i in range(len(data)):
+                print "###!!!### word[%d] = 0x%08X" % (i, data[i])
+        print "###!!!### count = %d, request = %d" % (count, request)
         self._data.append((count, request, data))
 
         if LOG_PACKET_BUILDS:
             self._logger.debug("add(%d, %02x:%s) -> [wc=%d, rc=%d, ba=%d]" %
                 (count, request, 'r' if (request & READ) else 'w', self._write_count, self._read_count, self._block_allowed))
+        print "###!!!### Command::add() leave"
 
     def _encode_transfer_data(self):
         """
@@ -299,6 +306,9 @@ class _Command(object):
                     buf[pos] = (write_list[write_pos] >> (8 * 3)) & 0xff
                     pos += 1
                     write_pos += 1
+
+            if (buf[13] & 0xFF) == 0x0D and (buf[18] & 0xFF) == 0x0D and (buf[23] & 0xFF) == 0x0D and (buf[28] & 0xFF) == 0x0D and (buf[33] & 0xFF) == 0x0D and (buf[34] & 0xFF) == 0x00:
+                print "xxxx"
         return buf
 
     def _decode_transfer_data(self, data):
@@ -643,6 +653,7 @@ class DAPAccessCMSISDAP(DAPAccessIntf):
         print "###!!!### DapAccessCmsisDap::disconnect() leaving"
 
     def write_reg(self, reg_id, value, dap_index=0):
+        print "###!!!### DapAccessCmsisDap::writeReg() start"
         assert reg_id in self.REG
         assert isinstance(value, six.integer_types)
         assert isinstance(dap_index, six.integer_types)
@@ -653,7 +664,11 @@ class DAPAccessCMSISDAP(DAPAccessIntf):
         else:
             request |= AP_ACC
         request |= (reg_id.value % 4) * 4
+        if request == 13:
+            print "###!!!### DapAccessCmsisDap::writeReg() request = 13"
+            print "###!!!### DapAccessCmsisDap::writeReg() regid = " + str(reg_id.value)
         self._write(dap_index, 1, request, [value])
+        print "###!!!### DapAccessCmsisDap::writeReg() leave"
 
     def read_reg(self, reg_id, dap_index=0, now=True):
         assert reg_id in self.REG

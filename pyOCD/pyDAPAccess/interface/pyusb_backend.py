@@ -137,7 +137,8 @@ class PyUSB(Interface):
             while not self.closed:
                 self.read_sem.acquire()
                 if not self.closed:
-                    self.rcv_data.append(self.ep_in.read(self.ep_in.wMaxPacketSize, 10 * 1000))
+                    data = self.ep_in.read(self.ep_in.wMaxPacketSize, 10 * 1000)
+                    self.rcv_data.append(data)
         finally:
             # Set last element of rcv_data to None on exit
             self.rcv_data.append(None)
@@ -171,7 +172,7 @@ class PyUSB(Interface):
 
         print "###XXX### usbinterface::write()"
         for i in range(len(data)):
-            print "###XXX### [%d]: 0x%08X" % (i, data[i])
+            print "###XXX### [%d]: 0x%02X" % (i, data[i])
         print "###XXX### usbinterface::write() leave"
 
         report_size = self.packet_size
@@ -210,7 +211,7 @@ class PyUSB(Interface):
 
         print "###XXX### usbinterface::read()"
         for i in range(len(ret)):
-            print "###XXX### [%d]: 0x%08X" % (i, ret[i])
+            print "###XXX### [%d]: 0x%02X" % (i, ret[i])
         print "###XXX### usbinterface::read() leave"
         return ret
 

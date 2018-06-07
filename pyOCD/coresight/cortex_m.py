@@ -873,3 +873,9 @@ class CortexM(Target):
 
     def setTargetContext(self, context):
         self._target_context = context
+
+    def adjustAccessNumberStart(self):
+        self.dp.adjustAccessNumberStart()
+
+    def adjustAccessNumberEnd(self):
+        self.dp.adjustAccessNumberEnd()

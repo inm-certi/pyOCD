@@ -224,3 +224,9 @@ class Target(object):
 
     def setRootContext(self, context, core=None):
         raise NotImplementedError()
+
+    def adjustAccessNumberStart(self):
+        raise NotImplementedError()
+
+    def adjustAccessNumberEnd(self):
+        raise NotImplementedError()

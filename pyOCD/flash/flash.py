@@ -356,9 +356,11 @@ class Flash(object):
     def waitForCompletion(self):
         print "###!!!### Flash::waitForCompletion() start"
         print "###!!!### Flash::waitForCompletion() while state == TARGET_RUNNING"
+        self.target.adjustAccessNumberStart()
         while(self.target.getState() == Target.TARGET_RUNNING):
             pass
         print "###!!!### Flash::waitForCompletion() end of while state == TARGET_RUNNING"
+        self.target.adjustAccessNumberEnd()
 
         if self.flash_algo_debug:
             analyzer_supported = self.flash_algo['analyzer_supported']

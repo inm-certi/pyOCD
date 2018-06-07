@@ -80,13 +80,24 @@ class DebugPort(object):
         self._csw = {}
         self._dp_select = -1
         self._access_number = 0
+        self._adjustAccessNumberStart = 0
+        self._adjustAccessNumberOffset = 0
         if LOG_DAP:
             self._setup_logging()
 
     @property
     def next_access_number(self):
+        print "###!!!### DebugPort::nextAccessNumber() accessNumber = " + str(self._access_number - self._adjustAccessNumberOffset)
         self._access_number += 1
         return self._access_number
+
+    def adjustAccessNumberStart(self):
+        self._adjustAccessNumberStart = self._access_number
+
+    def adjustAccessNumberEnd(self):
+        self._adjustAccessNumberOffset = self._adjustAccessNumberOffset + self._access_number - self._adjustAccessNumberStart
+        self._adjustAccessNumberStart = 0
+        print "###!!!### DebugPort::readAPAsync() new offset: " + str(self._adjustAccessNumberOffset)
 
     ## @brief Set up DAP logging.
     #
